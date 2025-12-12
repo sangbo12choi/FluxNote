@@ -7,7 +7,7 @@ function Login({ onSwitchToSignup }) {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -16,7 +16,7 @@ function Login({ onSwitchToSignup }) {
       return;
     }
 
-    const result = login(email, password);
+    const result = await login(email, password);
     if (!result.success) {
       setError(result.error);
     }

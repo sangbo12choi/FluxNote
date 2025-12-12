@@ -1,6 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext(null);
+
+// API 기본 URL 설정
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -19,66 +23,67 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('fluxnote-user');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        // 서버에서 사용자 정보 확인 (선택사항)
+        // verifyUser(userData.id);
       } catch (error) {
         console.error('Failed to load user:', error);
+        localStorage.removeItem('fluxnote-user');
       }
     }
     setLoading(false);
   }, []);
 
   // 로그인
-  const login = (email, password) => {
-    const users = JSON.parse(localStorage.getItem('fluxnote-users') || '[]');
-    const foundUser = users.find(
-      u => u.email === email && u.password === password
-    );
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password
+      });
 
-    if (foundUser) {
-      const userData = {
-        id: foundUser.id,
-        email: foundUser.email,
-        name: foundUser.name
-      };
-      setUser(userData);
-      localStorage.setItem('fluxnote-user', JSON.stringify(userData));
-      return { success: true };
-    } else {
-      return { success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' };
+      if (response.data.success) {
+        const userData = response.data.user;
+        setUser(userData);
+        localStorage.setItem('fluxnote-user', JSON.stringify(userData));
+        return { success: true };
+      } else {
+        return { success: false, error: response.data.error || '로그인에 실패했습니다.' };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        return { success: false, error: error.response.data.error };
+      }
+      return { success: false, error: '서버 연결에 실패했습니다. 서버가 실행 중인지 확인해주세요.' };
     }
   };
 
   // 회원가입
-  const signup = (email, password, name) => {
-    const users = JSON.parse(localStorage.getItem('fluxnote-users') || '[]');
-    
-    // 이메일 중복 확인
-    if (users.find(u => u.email === email)) {
-      return { success: false, error: '이미 사용 중인 이메일입니다.' };
+  const signup = async (email, password, name) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/signup`, {
+        email,
+        password,
+        name
+      });
+
+      if (response.data.success) {
+        const userData = response.data.user;
+        setUser(userData);
+        localStorage.setItem('fluxnote-user', JSON.stringify(userData));
+        return { success: true };
+      } else {
+        return { success: false, error: response.data.error || '회원가입에 실패했습니다.' };
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        return { success: false, error: error.response.data.error };
+      }
+      return { success: false, error: '서버 연결에 실패했습니다. 서버가 실행 중인지 확인해주세요.' };
     }
-
-    // 새 사용자 생성
-    const newUser = {
-      id: Date.now(),
-      email,
-      password, // 실제 프로덕션에서는 해시화해야 함
-      name,
-      createdAt: new Date().toISOString()
-    };
-
-    users.push(newUser);
-    localStorage.setItem('fluxnote-users', JSON.stringify(users));
-
-    // 자동 로그인
-    const userData = {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name
-    };
-    setUser(userData);
-    localStorage.setItem('fluxnote-user', JSON.stringify(userData));
-
-    return { success: true };
   };
 
   // 로그아웃
