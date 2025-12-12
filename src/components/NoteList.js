@@ -1,5 +1,5 @@
 import React from 'react';
-import './NoteList.css';
+import { BsTrash } from 'react-icons/bs';
 
 function NoteList({ notes, selectedNote, onSelectNote, onDeleteNote }) {
   const formatDate = (dateString) => {
@@ -25,36 +25,44 @@ function NoteList({ notes, selectedNote, onSelectNote, onDeleteNote }) {
   };
 
   return (
-    <div className="note-list">
+    <div className="flex-1 overflow-y-auto">
       {notes.length === 0 ? (
-        <div className="empty-list">
-          <p>노트가 없습니다</p>
+        <div className="flex items-center justify-center h-48">
+          <p className="text-gray-500">노트가 없습니다</p>
         </div>
       ) : (
-        <div className="note-items">
+        <div className="p-2">
           {notes.map(note => (
             <div
               key={note.id}
-              className={`note-item ${selectedNote && selectedNote.id === note.id ? 'active' : ''}`}
               onClick={() => onSelectNote(note)}
+              className={`p-4 mb-2 rounded-lg cursor-pointer transition-all duration-200 border-l-4 ${
+                selectedNote && selectedNote.id === note.id
+                  ? 'bg-indigo-50 border-indigo-500 shadow-md'
+                  : 'bg-gray-50 border-transparent hover:bg-gray-100 hover:translate-x-1'
+              }`}
             >
-              <div className="note-item-header">
-                <h3 className="note-item-title">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-semibold text-gray-800 flex-1 truncate">
                   {note.title || '제목 없음'}
                 </h3>
                 <button
-                  className="btn-delete"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDeleteNote(note.id);
                   }}
+                  className="text-red-500 hover:text-red-700 opacity-60 hover:opacity-100 transition-opacity ml-2 flex-shrink-0"
                   title="삭제"
                 >
-                  🗑️
+                  <BsTrash className="w-5 h-5" />
                 </button>
               </div>
-              <p className="note-item-preview">{getPreview(note.content)}</p>
-              <span className="note-item-date">{formatDate(note.updatedAt)}</span>
+              <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                {getPreview(note.content)}
+              </p>
+              <span className="inline-block bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded">
+                {formatDate(note.updatedAt)}
+              </span>
             </div>
           ))}
         </div>

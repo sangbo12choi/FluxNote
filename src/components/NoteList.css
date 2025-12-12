@@ -16,23 +16,19 @@
 }
 
 .note-item {
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 2px solid transparent;
+  border-left: 3px solid transparent !important;
 }
 
 .note-item:hover {
-  background-color: #f0f0f0;
   transform: translateX(4px);
+  background-color: #f8f9fa !important;
 }
 
 .note-item.active {
-  background-color: #e8e8ff;
-  border-color: #667eea;
+  border-left-color: #0d6efd !important;
+  background-color: #e7f1ff !important;
 }
 
 .note-item-header {
@@ -54,11 +50,7 @@
 }
 
 .btn-delete {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.25rem;
+  color: #dc3545 !important;
   opacity: 0.6;
   transition: opacity 0.2s ease;
   flex-shrink: 0;
@@ -66,6 +58,7 @@
 
 .btn-delete:hover {
   opacity: 1;
+  color: #dc3545 !important;
 }
 
 .note-item-preview {

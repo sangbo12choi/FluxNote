@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './NoteEditor.css';
 
 function NoteEditor({ note, onUpdateNote }) {
   const [title, setTitle] = useState(note.title || '');
@@ -24,26 +23,26 @@ function NoteEditor({ note, onUpdateNote }) {
   };
 
   return (
-    <div className="note-editor">
-      <div className="editor-header">
+    <div className="h-full bg-white m-4 md:m-8 rounded-xl shadow-lg overflow-hidden flex flex-col">
+      <div className="p-4 md:p-6 border-b border-gray-200 bg-gray-50">
         <input
           type="text"
-          className="editor-title"
+          className="w-full text-2xl md:text-3xl font-bold bg-transparent border-none outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:rounded-lg px-2 py-1 transition-all"
           placeholder="제목을 입력하세요..."
           value={title}
           onChange={handleTitleChange}
         />
       </div>
-      <div className="editor-body">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto">
         <textarea
-          className="editor-content"
+          className="w-full h-full min-h-[300px] md:min-h-[400px] text-base leading-relaxed border-none outline-none resize-none bg-transparent focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:rounded-lg px-2 py-1 transition-all"
           placeholder="내용을 입력하세요..."
           value={content}
           onChange={handleContentChange}
         />
       </div>
-      <div className="editor-footer">
-        <span className="editor-info">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <span className="inline-block bg-gray-200 text-gray-600 text-xs md:text-sm px-3 py-1 rounded-full">
           마지막 수정: {new Date(note.updatedAt).toLocaleString('ko-KR')}
         </span>
       </div>
